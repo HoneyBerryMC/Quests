@@ -31,6 +31,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Sheep;
@@ -677,6 +678,27 @@ public class PlayerListener implements Listener {
                 preKillMob(damager, event.getEntity());
             }
         }
+    }
+
+    @EventHandler
+    public void onEntity(final EntityDamageByEntityEvent event) {
+        final Entity damager = event.getDamager();
+        final Entity entity = event.getEntity();
+
+        if (!(damager instanceof Player)) {
+            return;
+        }
+
+        if (!(entity instanceof Mob)) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!entity.isDead()) {
+                return;
+            }
+            preKillMob(damager, entity);
+        }, 20L);
     }
     
     /**
